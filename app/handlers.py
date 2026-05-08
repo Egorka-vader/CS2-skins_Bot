@@ -5,12 +5,12 @@ from aiogram.filters import CommandStart,Command
 from aiogram.fsm.state import State,StatesGroup
 from aiogram.fsm.context import FSMContext
 import requests
-from CounterStrikeBot.app.parser_skins import parser
+from app.parser_skins import parser
 from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
-from CounterStrikeBot.app.keyboard import start_keyboard,payment
-from CounterStrikeBot.config import ADMIN_ID,TOKEN
+from app.keyboard import start_keyboard,payment
+from config import ADMIN_ID,TOKEN
 from datetime import datetime
-from CounterStrikeBot.database import BroadCast,User,SessionLocal
+from database import BroadCast,User,SessionLocal
 
 
 router = Router()
@@ -128,7 +128,7 @@ async def start_message(message:Message):
     welcome_text_message = await message.answer_photo(photo="https://ggate.media/wp-content/uploads/2025/02/vosem-tipov-redkosti-skinov-cs2.png",caption="<b>👋 Добро пожаловать!</b>\n\n<b>CS2_skins_Bot</b> - Shop бот для поиска информации о скинах\n\n📋 <b>Используйте меню</b> ниже для навигации  ",parse_mode='HTML')
 
     await message.reply(
-        f'ℹ️ Вся необходимая информация о вашем профиле\n\n🏷️ <b>Имя:</b> <a href="tg://copy?text=ddddd">{message.from_user.full_name}</a>\n🆔 <b>Мой ID:</b> <a href="tg://copy?text=ddddddd">{message.from_user.id}</a>\n\n📆 <b>Регистрация:</b> <a href="tg://copy?text=fdddd">{register_at}</a>\n🔃 <b>TG Премиум:</b> {message.from_user.is_premium}\n\n🔑 <b>Подписка:</b> {premium}\n🗣️ \n💰 Твой баланс: <a href="tg://copy?text=0.00">0.00 RUB</a>\n',
+        f'ℹ️ Вся необходимая информация о вашем профиле\n\n🏷️ <b>Имя:</b> <a href="tg://copy?text=ddddd">{message.from_user.full_name}</a>\n🆔 <b>Мой ID:</b> <a href="tg://copy?text=ddddddd">{message.from_user.id}</a>\n\n📆 <b>Регистрация:</b> <a href="tg://copy?text=fdddd">{register_at}</a>\n🔃 <b>TG Премиум:</b> {message.from_user.is_premium}\n\n💳 <b>Подписка:</b> {premium}\n🗣️ \n💰 Твой баланс: <a href="tg://copy?text=0.00">0.00 RUB</a>\n',
         reply_markup=start_keyboard, parse_mode="HTML")
 
 @router.callback_query(F.data == 'profile')
@@ -148,13 +148,13 @@ async def profile_answer(callback:CallbackQuery):
 
     db.close()
     await callback.message.reply(
-        f'ℹ️ Вся необходимая информация о вашем профиле\n\n🏷️ <b>Имя:</b> <a href="tg://copy?text=ddddd">{callback.from_user.full_name}</a>\n🔗<b>Username:</b> @{callback.from_user.username}\n\n🆔 <b>Мой ID:</b> <a href="tg://copy?text=ddddddd">{callback.message.from_user.id}</a>\n📆 <b>Регистрация:</b> <a href="tg://copy?text=fdddd">{register_at}</a>\n🔃 <b>TG Премиум:</b> {callback.message.from_user.is_premium}\n\n🔑 <b>Подписка:</b> {premium}\n🗣️ <b>Язык:</b> <b>{callback.message.from_user.language_code}</b>\n\n💰 Твой баланс: <a href="tg://copy?text=0.00">0.00 RUB</a>\n',
+        f'ℹ️ Вся необходимая информация о вашем профиле\n\n🏷️ <b>Имя:</b> <a href="tg://copy?text=ddddd">{callback.from_user.full_name}</a>\n🔗<b>Username:</b> @{callback.from_user.username}\n\n🆔 <b>Мой ID:</b> <a href="tg://copy?text=ddddddd">{callback.message.from_user.id}</a>\n📆 <b>Регистрация:</b> <a href="tg://copy?text=fdddd">{register_at}</a>\n🔃 <b>TG Премиум:</b> {callback.message.from_user.is_premium}\n\n💳 <b>Подписка:</b> {premium}\n🗣️ <b>Язык:</b> <b>{callback.message.from_user.language_code}</b>\n\n💰 Твой баланс: <a href="tg://copy?text=0.00">0.00 RUB</a>\n',
          parse_mode="HTML",reply_markup=start_keyboard)
 
 @router.callback_query(F.data == 'premium')
 async def premium_get(callback:CallbackQuery):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='🔑 Подписка ', callback_data='subscribe')],
+        [InlineKeyboardButton(text='💳 Подписка ', callback_data='subscribe')],
         [InlineKeyboardButton(text='🤝 Поддержка бота', callback_data='support_bot')]
     ])
     await callback.answer('')
@@ -176,8 +176,8 @@ async def premium_getting(callback: CallbackQuery):
     await callback.answer('')
 
     await callback.message.answer_invoice(
-        title='🔑 Premium подписка',
-        description='• 50 запросов в месяц\n• Доступ к расширенному поиску\n• Приоритетная поддержка',
+        title='💳 Premium подписка',
+        description='• 1000 запросов в месяц\n• Доступ к расширенному поиску\n• Приоритетная поддержка',
         prices=prices,
         provider_token='',
         payload='premium_subscription',
@@ -231,7 +231,7 @@ async def process_successful_payment(message: Message):
         db.commit()
 
         await message.answer(
-            f"✅ **Premium 🔑одписка активирована!**\n\n"
+            f"✅ **Premium 💳 Подписка активирована!**\n\n"
             f"⭐ Получено: {payment.total_amount} звёзд\n"
             f"Спасибо за покупку! 🎉",
              message_effect_id="5104841245755180586"
